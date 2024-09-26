@@ -9,6 +9,7 @@ const Home = () => {
   const [response, setResponse] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [type, setType] = useState("text");
+  const [isLoading, setIsLoading] = useState(false);
 
   const options = [
     {
@@ -30,8 +31,10 @@ const Home = () => {
   }, []);
 
   const getResponse = async () => {
+    setIsLoading(true);
     if (!apiKey) {
       alert("Please enter an API key");
+      setIsLoading(false);
       return;
     }
     const input = type === "text" ? text : [
@@ -58,13 +61,16 @@ const Home = () => {
       setResponse({
         error: "Error",
       });
+      setIsLoading(false);
       return;
     }
     const data = await response.json();
     setResponse(data);
+    setIsLoading(false);
   };
 
   const handleClick = async () => {
+    if (isLoading) return;
     await getResponse();
   };
 
@@ -131,8 +137,9 @@ const Home = () => {
         />
         <button
           onClick={handleClick}
+          disabled={isLoading}
         >
-          Submit
+          {isLoading ? "Loading..." : "Submit"}
         </button>
       </div>
     </div>
